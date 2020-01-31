@@ -1,4 +1,4 @@
-import AddressScroll from './src/index.vue'
+import AddressScroll from './index.vue'
 
 let plugin = {
   install(Vue, options) {
