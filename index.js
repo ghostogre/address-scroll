@@ -1,8 +1,8 @@
-import LetterScroll from './src/index.vue'
+import AddressScroll from './src/index.vue'
 
 let plugin = {
   install(Vue, options) {
-    Vue.component("ying-letter-scroll", LetterScroll)
+    Vue.component("ying-address-scroll", AddressScroll)
   }
 }
 
@@ -12,7 +12,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 export {
-  LetterScroll
+  AddressScroll
 }
 
 export default plugin
