@@ -1,0 +1,30 @@
+{
+  "name": "ying-address-scroll",
+  "version": "1.0.0",
+  "description": "a address scroll component",
+  "repository": "ghostogre.github.io",
+  "author": "yingjh",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "7.8.3",
+    "@babel/polyfill": "7.8.3",
+    "@babel/preset-env": "7.8.3",
+    "babel-loader": "8.0.6",
+    "chai": "4.2.0",
+    "cnchar": "2.0.8",
+    "cnchar-poly": "2.0.8",
+    "css-loader": "3.4.2",
+    "jest": "25.1.0",
+    "sass-loader": "8.0.2",
+    "vue": "2.6.11",
+    "vue-loader": "15.8.3",
+    "vue-style-loader": "4.1.2",
+    "vue-template-compiler": "2.6.11",
+    "webpack": "4.41.5",
+    "webpack-cli": "3.3.10"
+  }
+}
