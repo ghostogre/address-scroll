@@ -1,23 +1,25 @@
 {
-  "name": "ying-address-scroll",
+  "name": "ying-letter-scroll",
   "version": "1.0.0",
   "description": "a address scroll component",
-  "repository": "ghostogre.github.io",
+  "repository": "https://github.com/ghostogre/address-scroll",
+  "homepage": "https://github.com/ghostogre/address-scroll",
   "author": "yingjh",
   "license": "MIT",
   "scripts": {
     "build": "webpack --config build/webpack.config.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cnchar-poly": "2.0.8",
+    "cnchar": "2.0.8"
+  },
   "devDependencies": {
     "@babel/core": "7.8.3",
     "@babel/polyfill": "7.8.3",
     "@babel/preset-env": "7.8.3",
     "babel-loader": "8.0.6",
-    "chai": "4.2.0",
-    "cnchar": "2.0.8",
-    "cnchar-poly": "2.0.8",
     "css-loader": "3.4.2",
+    "chai": "4.2.0",
     "jest": "25.1.0",
     "sass-loader": "8.0.2",
     "vue": "2.6.11",
