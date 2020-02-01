@@ -5,10 +5,22 @@
     @touchend="handleTouchEnd">
     <dl class="addressBook__item" v-for="(letter) in letters" :key="letter.key">
       <dt class="addressBook__itemTitle" :style="titleStyle">{{letter.key}}</dt>
-      <dd class="addressBook__itemPerson" v-for="(address, index) in dataList[letter.key]" :key="`${letter}-${index}`">
-        <slot name="address" :address="address">
-          {{address}}
-        </slot>
+      <dd
+        v-for="(address, index) in dataList[letter.key]"
+        :key="`${letter}-${index}`"
+        class="addressBook__itemPerson"
+        >
+        <div
+          class="addressBook__itemContent"
+          @touchstart="slideStart"
+          @touchmove="slide">
+          <slot name="address" :address="address">
+            {{address}}
+          </slot>
+        </div>
+        <div v-if="!disableDelete" class="addressBook__itemDelete">
+          删除
+        </div>
       </dd>
     </dl>
 
@@ -72,6 +84,10 @@ export default {
     bubbleSize: {
       type: String,
       default: '36px'
+    },
+    disableDelete: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -106,7 +122,9 @@ export default {
       letters: [],
       prevOffset: -9999, // 记录上次的scroll
       selectLetter: false,
-      indexPosX: -9999
+      indexPosX: -9999,
+      startX: -9999,
+      startY: -9999
     }
   },
   mounted () {
@@ -143,6 +161,8 @@ export default {
     handleTouchEnd () {
       this.prevOffset = -9999
       this.selectLetter = false
+      this.startX = -9999
+      this.startY = -9999
     },
     // 滑动开始
     handleTouchStart (e) {
@@ -150,6 +170,31 @@ export default {
         this.indexPosX = e.touches[0].clientX
       } // 固定x为第一次滑动的x坐标
       this.selectLetter = true
+    },
+    slide (e) {
+      if (this.disableDelete) {
+        return
+      }
+      const { clientX, clientY } = e.touches[0]
+      let dy = this.startY - clientY
+      let dx = this.startX - clientX
+      if (Math.abs(dy) > 8) { // 上下移动的时候不超过8px
+        e.target.parentElement.style = 'transform: translateX(0);'
+      } else if (dx >= 0 && dx <= 75)  {
+        e.target.parentElement.style = `transform: translateX(-${dx}px);`
+      } else if (dx < 0) {
+        e.target.parentElement.style = 'transform: translateX(0);'
+      } else if (dx > 75) {
+        e.target.parentElement.style = 'transform: translateX(-75px);'
+      }
+    },
+    slideStart (e) {
+      if (this.disableDelete) {
+        return
+      }
+      const { clientX, clientY } = e.touches[0]
+      this.startX = clientX
+      this.startY = clientY
     },
     go(top) {
       this.$refs.addressBook.scrollTop = top
@@ -178,19 +223,45 @@ export default {
 
 <style lang="scss">
   .addressBook {
+    width: 100%;
     height: 100%;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
     .addressBook__item {
-      padding: 5px 10px;
       margin: 0;
+      width: 100%;
+      flex-wrap: nowrap;
+      box-sizing: border-box;
       background-color: white;
       .addressBook__itemTitle {
         font-size: 24px;
         font-weight: bold;
       }
+
       .addressBook__itemPerson {
-        padding: 5px 0px;
         margin: 0;
+        height: 45px;
+        padding: 5px 0;
+        box-sizing: border-box;
+        position: relative;
+        display: flex;
+        align-items: center;
+        transition: all .2s ease;
+      }
+
+      .addressBook__itemDelete {
+        position: absolute;
+        width: 75px;
+        height: 45px;
+        text-align: center;
+        right: -76px;
+        color: white;
+        line-height: 45px;
+        background-color: #D92E2E!important;
+      }
+
+      .addressBook__itemContent {
+        width: 100%;
       }
     }
 
@@ -210,6 +281,7 @@ export default {
       li {
         width: 25px;
         text-align: center;
+        user-select: none;
         font-size: 16px;
         opacity: .9;
         padding: 5px 0;

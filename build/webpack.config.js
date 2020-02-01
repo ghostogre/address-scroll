@@ -2,16 +2,6 @@ const path = require("path");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 module.exports = {
-  mode: "production",
-  entry: path.resolve(__dirname, "../src/index.js"),
-  output: {
-    path: path.resolve(__dirname, "../dist"),
-    filename: "ying-address-scroll.js",
-    publicPath: "../dist/",
-    library: "ying-address-scroll",
-    libraryTarget: "umd",
-    umdNamedDefine: true
-  },
   module: {
     rules: [
       {
@@ -41,7 +31,14 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        loader: "vue-loader",
+        use: {
+          loader: "vue-loader",
+          options: {
+            compilerOptions: {
+              preserveWhitespace: false
+            }
+          }
+        },
         // 只打包src目录下的文件
         include: path.resolve(__dirname, "../src")
       }
@@ -49,15 +46,12 @@ module.exports = {
   },
   resolve: {
     alias: {
-      "vue$": "vue/dist/runtime.esm.js",
+      "vue$": "vue/dist/vue.runtime.esm.js",
       " @": path.resolve(__dirname, "../src")
     },
     extensions: ["*", ".js", ".json", ".vue"]
   },
   plugins: [
     new VueLoaderPlugin()
-  ],
-  externals: { // 不打包vue
-    vue: "vue"
-  }
+  ]
 }
