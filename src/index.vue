@@ -18,7 +18,7 @@
             {{address}}
           </slot>
         </div>
-        <div v-if="!disableDelete" class="addressBook__itemDelete">
+        <div v-if="!disableDelete" class="addressBook__itemDelete" @click="handleDelete(dataList[letter.key], index)">
           删除
         </div>
       </dd>
@@ -198,6 +198,12 @@ export default {
     },
     go(top) {
       this.$refs.addressBook.scrollTop = top
+    },
+    handleDelete (value, index) {
+      this.$emit('delete', {
+        index,
+        value
+      })
     }
   },
   watch: {
