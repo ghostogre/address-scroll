@@ -2,23 +2,30 @@
   <div
     class="addressBook"
     ref="addressBook"
-    @touchend="handleTouchEnd">
-    <dl class="addressBook__item" v-for="(letter) in letters" :key="letter.key">
+    @touchend.passive="handleTouchEnd"
+    @touchmove.passive="handleTouchMove">
+    <dl
+      class="addressBook__item"
+      v-for="(letter, idx) in letters"
+      :key="letter.key"
+      data-wrap="true"
+      >
       <dt class="addressBook__itemTitle" :style="titleStyle">{{letter.key}}</dt>
       <dd
-        v-for="(address, index) in dataList[letter.key]"
-        :key="`${letter}-${index}`"
+        v-for="(address, idx1) in dataList[letter.key]"
+        :key="`${letter}-${idx1}`"
         class="addressBook__itemPerson"
+        :data-target="`${idx}-${idx1}`"
+        :style="`${idx}-${idx1}` == slideTarget ? slideStyle: { transform: 'translateX(0)' }"
         >
         <div
           class="addressBook__itemContent"
-          @touchstart="slideStart"
-          @touchmove="slide">
+          @touchstart="slideStart">
           <slot name="address" :address="address">
-            {{address}}
+            <span>{{address}}</span>
           </slot>
         </div>
-        <div v-if="!disableDelete" class="addressBook__itemDelete" @click="handleDelete(dataList[letter.key], index)">
+        <div v-if="!disableDelete" class="addressBook__itemDelete" @click="handleDelete(dataList[letter.key])">
           删除
         </div>
       </dd>
@@ -26,8 +33,8 @@
 
     <ul
       class="addressBook__letter"
-      @touchmove.prevent="handleTouchMove"
-      @touchstart="handleTouchStart"
+      @touchmove.prevent="handleLetterScroll"
+      @touchstart.passive="handleLetterStart"
       ref="letterBlock">
       <li
         v-for="letter in letters"
@@ -115,6 +122,12 @@ export default {
         width: this.bubbleSize,
         lineHeight: this.bubbleSize
       }
+    },
+    // 滑动样式
+    slideStyle () {
+      return {
+        transform: `translateX(-${this.dx}px)`
+      }
     }
   },
   data () {
@@ -123,8 +136,9 @@ export default {
       prevOffset: -9999, // 记录上次的scroll
       selectLetter: false,
       indexPosX: -9999,
-      startX: -9999,
-      startY: -9999
+      startX: 0,
+      dx: 0, // 水平位移
+      slideTarget: null
     }
   },
   mounted () {
@@ -147,7 +161,7 @@ export default {
       })
     },
     // 滑动索引
-    handleTouchMove (e) {
+    handleLetterScroll (e) {
       const x = this.indexPosX
       const y = e.touches[0].clientY
       const target = document.elementFromPoint(x, y)
@@ -161,31 +175,30 @@ export default {
     handleTouchEnd () {
       this.prevOffset = -9999
       this.selectLetter = false
-      this.startX = -9999
-      this.startY = -9999
     },
     // 滑动开始
-    handleTouchStart (e) {
+    handleLetterStart (e) {
       if (!this.selectLetter) {
         this.indexPosX = e.touches[0].clientX
       } // 固定x为第一次滑动的x坐标
       this.selectLetter = true
     },
-    slide (e) {
+    handleTouchMove (e) {
       if (this.disableDelete) {
         return
       }
       const { clientX, clientY } = e.touches[0]
-      let dy = this.startY - clientY
-      let dx = this.startX - clientX
-      if (Math.abs(dy) > 8) { // 上下移动的时候不超过8px
-        e.target.parentElement.style = 'transform: translateX(0);'
-      } else if (dx >= 0 && dx <= 75)  {
-        e.target.parentElement.style = `transform: translateX(-${dx}px);`
-      } else if (dx < 0) {
-        e.target.parentElement.style = 'transform: translateX(0);'
-      } else if (dx > 75) {
-        e.target.parentElement.style = 'transform: translateX(-75px);'
+      let targetElement = this.getTarget(document.elementFromPoint(clientX, clientY))
+      if (targetElement) {
+        this.slideTarget = targetElement.dataset.target
+        const dx = this.startX - clientX
+        if (dx < 0) {
+          this.dx = 0
+        } else if (dx > 75) {
+          this.dx = 75
+        } else {
+          this.dx = dx
+        }
       }
     },
     slideStart (e) {
@@ -194,16 +207,22 @@ export default {
       }
       const { clientX, clientY } = e.touches[0]
       this.startX = clientX
-      this.startY = clientY
     },
     go(top) {
       this.$refs.addressBook.scrollTop = top
     },
-    handleDelete (value, index) {
-      this.$emit('delete', {
-        index,
-        value
-      })
+    handleDelete (item) {
+      this.$emit('delete', item)
+    },
+    // 查找父节点
+    getTarget(ele) {
+      if (!ele || (ele.dataset && ele.dataset.wrap)) {
+        return null
+      } else if (ele.dataset && ele.dataset.target) {
+        return ele
+      } else {
+        return this.getTarget(ele.parentElement)
+      }
     }
   },
   watch: {
@@ -268,6 +287,9 @@ export default {
 
       .addressBook__itemContent {
         width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
       }
     }
 

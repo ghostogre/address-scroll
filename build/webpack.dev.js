@@ -17,6 +17,7 @@ module.exports = WebpackMerge(webpackConfig, {
   devServer: {
     port: 3000,
     hot: true,
+    host: '192.168.3.9',
     contentBase: path.resolve(__dirname, '../dist')
   },
   plugins: [
