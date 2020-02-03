@@ -2,6 +2,7 @@
   <div
     class="addressBook"
     ref="addressBook"
+    data-wrap="true"
     @touchend.passive="handleTouchEnd"
     @touchmove.passive="handleTouchMove">
     <dl
