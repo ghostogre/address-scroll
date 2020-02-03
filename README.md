@@ -23,4 +23,4 @@ npm install ying-address-scroll-1
 | bubble-size: String      | 气泡大小，默认为`36px`          |
 | disable-delete: Boolean  | 是否显示侧滑删除，默认为`false` |
 
-![效果图片](https://wx2.sinaimg.cn/mw690/7147f80aly1gbh8hcfkq1g20ee0ke0uf.gif)
+![效果图片](https://wx1.sinaimg.cn/mw690/7147f80aly1gbjol85rpjg20c00kegqo.gif)
