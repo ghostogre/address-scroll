@@ -81,24 +81,29 @@ export default {
       type: Boolean,
       default: true
     },
+    // 气泡背景色
     bubbleColor: {
       type: String,
       default: '#3d7e9a'
     },
+    // 气泡字体大小
     bubbleFontSize: {
       type: String,
       default: '22px'
     },
+    // 气泡大小
     bubbleSize: {
       type: String,
       default: '36px'
     },
+    // 是否删除
     disableDelete: {
       type: Boolean,
       default: false
     }
   },
   computed: {
+    // 数据列表
     dataList () {
       let dataList = Object.create(null)
       this.data.map(item => {
@@ -137,15 +142,16 @@ export default {
       prevOffset: -9999, // 记录上次的scroll
       selectLetter: false,
       indexPosX: -9999,
-      startX: 0,
+      startX: 0, // 侧滑起始
       dx: 0, // 水平位移
-      slideTarget: null
+      slideTarget: null // 当前滑动目标
     }
   },
   mounted () {
     this.calcLocation()
   },
   methods: {
+    // 计算列表位置
     calcLocation () {
       this.$nextTick(() => {
         let list = Array.prototype.slice.call(this.$refs.addressBook.getElementsByTagName('dl'), 0)
@@ -177,13 +183,14 @@ export default {
       this.prevOffset = -9999
       this.selectLetter = false
     },
-    // 滑动开始
+    // 索引滑动开始
     handleLetterStart (e) {
       if (!this.selectLetter) {
         this.indexPosX = e.touches[0].clientX
       } // 固定x为第一次滑动的x坐标
       this.selectLetter = true
     },
+    // 列表滑动
     handleTouchMove (e) {
       if (this.disableDelete) {
         return
@@ -202,6 +209,7 @@ export default {
         }
       }
     },
+    // 侧滑开始
     slideStart (e) {
       if (this.disableDelete) {
         return
@@ -209,9 +217,11 @@ export default {
       const { clientX, clientY } = e.touches[0]
       this.startX = clientX
     },
+    // 跳转目标位置
     go(top) {
       this.$refs.addressBook.scrollTop = top
     },
+    // 删除事件
     handleDelete (item) {
       this.$emit('delete', item)
     },
