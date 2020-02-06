@@ -23,7 +23,7 @@
           class="addressBook__itemContent"
           @touchstart="slideStart">
           <slot name="address" :address="address">
-            <span>{{address}}</span>
+            <span>{{label ? address[label] : address}}</span>
           </slot>
         </div>
         <div v-if="!disableDelete" class="addressBook__itemDelete" @click="handleDelete(dataList[letter.key])">
